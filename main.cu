@@ -80,6 +80,7 @@ int main(int argc, char** argv)
 
 	/* main MD loop */
 	printf("Running simulation.\n", np, nsteps);
+
 	for (unsigned int step = 0; step <= nsteps; step++) //running simulation loop
 	{
 		/* first integration for velverlet */

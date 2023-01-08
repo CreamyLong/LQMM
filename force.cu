@@ -3,7 +3,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <math.h>
-//#include <sys/time.h> //only windows
 #include <time.h>
 #include <iostream>
 #include <algorithm>
