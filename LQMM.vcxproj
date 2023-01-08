@@ -151,7 +151,9 @@
     <CudaCompile Include="force.cu">
       <FileType>CppCode</FileType>
     </CudaCompile>
-    <CudaCompile Include="init.cu" />
+    <CudaCompile Include="init.cu">
+      <FileType>CppCode</FileType>
+    </CudaCompile>
     <CudaCompile Include="main.cu">
       <FileType>CppCode</FileType>
     </CudaCompile>

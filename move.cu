@@ -14,7 +14,13 @@
 
 
 // first step integration of velocity verlet algorithm
-extern "C" __global__ void first_integration_kernel(unsigned int np, float dt, float3 box, float4 * r, float4 * v, float4 * f)
+extern "C" __global__ void first_integration_kernel(
+	unsigned int np,
+	float dt,
+	float3 box,
+	float4 * r,
+	float4 * v,
+	float4 * f)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if (i < np)
@@ -36,7 +42,14 @@ extern "C" __global__ void first_integration_kernel(unsigned int np, float dt, f
 	}
 }
 
-void first_integration(unsigned int np, float dt, float3 box, float4* r, float4* v, float4* f, unsigned int block_size)
+void first_integration(
+	unsigned int np,
+	float dt,
+	float3 box,
+	float4* r,
+	float4* v,
+	float4* f,
+	unsigned int block_size)
 {
 
 	dim3 grid((np / block_size) + 1, 1, 1);
@@ -52,7 +65,11 @@ void first_integration(unsigned int np, float dt, float3 box, float4* r, float4*
 }
 
 // second step integration of velocity verlet algorithm
-extern "C" __global__ void second_integration_kernel(unsigned int np, float dt, float4 * v, float4 * f)
+extern "C" __global__ void second_integration_kernel(
+	unsigned int np,
+	float dt,
+	float4 * v,
+	float4 * f)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if (i < np)
@@ -64,7 +81,12 @@ extern "C" __global__ void second_integration_kernel(unsigned int np, float dt, 
 	}
 }
 
-void second_integration(unsigned int np, float dt, float4* v, float4* f, unsigned int block_size)
+void second_integration(
+	unsigned int np,
+	float dt,
+	float4* v,
+	float4* f,
+	unsigned int block_size)
 {
 
 	dim3 grid((np / block_size) + 1, 1, 1);

@@ -20,7 +20,12 @@ float R2S()
 	return fran;
 }
 
-void init(unsigned int np, float4* r, float4* v, float3 box, float min_dis)
+void init(
+	unsigned int np,
+	float4* r,
+	float4* v,
+	float3 box,
+	float min_dis)
 {
 	for (unsigned int i = 0; i < np; i++)
 	{

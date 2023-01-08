@@ -9,7 +9,6 @@
 #include "force.h"
 #include "macro.h"
 
-
 // main function
 int main(int argc, char** argv)
 {
@@ -19,6 +18,11 @@ int main(int argc, char** argv)
 	float3 epsilon = make_float3(1.0, 0.2, 1.0);
 	*/
 	//running parameters
+
+	/*
+	unsigned的作用就是将数字类型无符号化， 例如 int 型的范围：-2^31 ~ 2^31 - 1，而unsigned int的范围：0 ~ 2^32。
+	无符号版本和有符号版本的区别就是无符号类型能保存2倍于有符号类型的正整数数据。
+	*/
 	unsigned int np = 2700;                  // the number of particles
 	unsigned int nsteps = 500;             // the number of time steps
 	float dt = 0.001;                       // integration time step
@@ -26,21 +30,40 @@ int main(int argc, char** argv)
 
 	unsigned int nprint = 100;              //  period for data output
 	unsigned int block_size = 128;          //  the number of threads in a block           
-	//timeval start;                          // start time 
-	//timeval end;                            // end time
 
-	clock_t start, end;
+	clock_t start, end; // start time , end time
 
+	
+	
 	float3 box = make_float3(15.0, 15.0, 15.0);     // box size in x, y, and z directions
-	float3 epsilon = make_float3(1.0, 0.5, 1.0);   // epsilon.x for type 1.0 and 1.0; epsilon.y for type 1.0 and 2.0; epsilon.z for type 1.0 and 2.0
-	float3 sigma = make_float3(1.0, 1.0, 1.0);     // sigma.x for type 1.0 and 1.0; sigma.y for type 1.0 and 2.0; sigma.z for type 1.0 and 2.0
-	float min_dis = sigma.x * 0.9;              // the minimum distance between particles for system generation
+	
+	//Lennard-Jones兰纳-琼斯连续势能计算，是用来模拟两个电中性的分子或原子间相互作用势能的一个比较简单的数学模型。
+	/*
+	    epsilon等于势能阱的深度
+		epsilon.x for type 1.0 and 1.0;
+		epsilon.y for type 1.0 and 2.0;
+		epsilon.z for type 1.0 and 2.0
+	*/
+	float3 epsilon = make_float3(1.0, 0.5, 1.0);   
+	
+	/*
+	    sigma是互相作用的势能正好为零时的两体距离
+		sigma.x for type 1.0 and 1.0;
+		sigma.y for type 1.0 and 2.0;
+		sigma.z for type 1.0 and 2.0
+	*/
+	float3 sigma = make_float3(1.0, 1.0, 1.0);     // 
+	
+	float min_dis = sigma.x * 0.9;	// the minimum distance between particles for system generation
+	
 	float3 lj1, lj2;
 
+	//第一项可认为是对应于两体在近距离时以互相排斥为主的作用
 	lj1.x = 4.0 * epsilon.x * pow(sigma.x, float(12.0));
 	lj1.y = 4.0 * epsilon.y * pow(sigma.y, float(12.0));
 	lj1.z = 4.0 * epsilon.z * pow(sigma.z, float(12.0));
 
+	//第二项对应两体在远距离以互相吸引（例如通过范德瓦耳斯力）为主的作用
 	lj2.x = 4.0 * epsilon.x * pow(sigma.x, float(6.0));
 	lj2.y = 4.0 * epsilon.y * pow(sigma.y, float(6.0));
 	lj2.z = 4.0 * epsilon.z * pow(sigma.z, float(6.0));
@@ -70,12 +93,13 @@ int main(int argc, char** argv)
 
 	printf("Starting simulation with %d atoms for %d steps.\n", np, nsteps);
 	printf("Generating system.\n", np, nsteps);
+
+
 	init(np, h_r, h_v, box, min_dis);
 
 	cudaMemcpy(d_r, h_r, np * sizeof(float4), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_v, h_v, np * sizeof(float4), cudaMemcpyHostToDevice);
 
-	//gettimeofday(&start,NULL);		                  //get start time
 	start = clock();
 
 	/* main MD loop */
@@ -100,15 +124,10 @@ int main(int argc, char** argv)
 		{
 			cudaMemcpy(h_r, d_r, np * sizeof(float4), cudaMemcpyDeviceToHost);
 			cudaMemcpy(h_info, d_info, 16 * sizeof(float), cudaMemcpyDeviceToHost);
-
 			output(traj, step, h_info, h_r, np);
 			printf("time step %d \n", step);
 		}
 	}
-
-	//gettimeofday(&end,NULL);                           // get end time
-	//long timeusr=(end.tv_sec-start.tv_sec)*1000000+(end.tv_usec-start.tv_usec);
-	//printf("time is %ld  microseconds\n",timeusr);     // the spending time on simulation in microseconds
 
 	end = clock();
 	double  duration = (double)(end - start) / CLOCKS_PER_SEC;

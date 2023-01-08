@@ -24,7 +24,12 @@ void checkCUDAError(const char* msg)
 }
 
 // output system information and frame in XYZ formation which can be read by VMD
-void output(FILE* traj, unsigned int step, float* info, float4* r, unsigned int np)
+void output(
+	FILE* traj,
+	unsigned int step,
+	float* info,
+	float4* r,
+	unsigned int np)
 {
 	float temp = info[0];
 	float potential = info[1];

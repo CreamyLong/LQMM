@@ -31,6 +31,7 @@ extern "C" __global__ void force_calculation_kernel(
 
 	float4 force = make_float4(0.0, 0.0, 0.0, 0.0);
 	float4 ri = make_float4(0.0, 0.0, 0.0, 0.0);
+	
 	if (i < np)
 		ri = r[i];
 
@@ -107,13 +108,20 @@ extern "C" __global__ void force_calculation_kernel(
 
 	if (i < np) {
 		f[i] = force;
-		//	printf("%d  %f   %f   %f   %f  \n", i, force.x,  force.y, force.z, force.w);
+		//printf("%d  %f   %f   %f   %f  \n", i, force.x,  force.y, force.z, force.w);
 	}
 }
 
 
-void force_calculation(unsigned int np, float3 box, float3 epsilon, float3 sigma,
-	float4* r, float4* f, float rcut, unsigned int block_size)
+void force_calculation(
+	unsigned int np,
+	float3 box,
+	float3 epsilon,
+	float3 sigma,
+	float4* r,
+	float4* f,
+	float rcut,
+	unsigned int block_size)
 {
 
 	dim3 grid((np / block_size) + 1, 1, 1);

@@ -11,15 +11,17 @@
 #include <cuda_runtime.h>
 #include "device_launch_parameters.h"
 #include "device_functions.h"
-
-
 #include <algorithm>
 #include "utils.h"
 
 
 
 // system information collection for temperature, kinetic energy, potential and total energy	
-__global__ void compute_info_sums_kernel(unsigned int np, float4* v, float4* f, float2* scratch)
+__global__ void compute_info_sums_kernel(
+    unsigned int np,
+    float4* v,
+    float4* f,
+    float2* scratch)
 {
     extern __shared__ float2 sdata[];
     int i = blockIdx.x * (blockDim.x * 2) + threadIdx.x;
@@ -64,7 +66,11 @@ __global__ void compute_info_sums_kernel(unsigned int np, float4* v, float4* f, 
 }
 
 
-__global__ void compute_info_final_kernel(unsigned int np, float* info, float2* scratch, unsigned int num_partial_sums)
+__global__ void compute_info_final_kernel(
+    unsigned int np,
+    float* info,
+    float2* scratch,
+    unsigned int num_partial_sums)
 {
     extern __shared__ float2 sdata[];
     float2 final_sum = make_float2(0.0, 0.0);
@@ -121,7 +127,13 @@ __global__ void compute_info_final_kernel(unsigned int np, float* info, float2* 
     }
 }
 
-void compute_info(unsigned int np, float4* v, float4* f, float2* scratch, float* info, unsigned int block_size)
+void compute_info(
+    unsigned int np,
+    float4* v,
+    float4* f,
+    float2* scratch,
+    float* info,
+    unsigned int block_size)
 {
 
     unsigned int n_blocks = (int)ceil((float)np / (float)block_size);
