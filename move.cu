@@ -23,12 +23,11 @@ extern "C" __global__ void first_integration_kernel(
 	float4 * f)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
-
 	if (i < np)
 	{
 		float4 ri = r[i];
 		float mass = v[i].w;
-		
+
 		v[i].x += 0.5 * dt * f[i].x / mass;
 		v[i].y += 0.5 * dt * f[i].y / mass;
 		v[i].z += 0.5 * dt * f[i].z / mass;
@@ -57,10 +56,9 @@ void first_integration(
 	dim3 block(block_size, 1, 1);
 
 	first_integration_kernel << < grid, block >> > (np, dt, box, r, v, f);
-	
 	// block until the device has completed
-	cudaDeviceSynchronize(); 	
-
+	//cudaThreadSynchronize();
+	cudaDeviceSynchronize();
 
 	// check if kernel execution generated an error
 	checkCUDAError("kernel execution");
@@ -96,7 +94,7 @@ void second_integration(
 
 	second_integration_kernel << < grid, block >> > (np, dt, v, f);
 	// block until the device has completed
-
+	//cudaThreadSynchronize();
 	cudaDeviceSynchronize();
 
 	// check if kernel execution generated an error

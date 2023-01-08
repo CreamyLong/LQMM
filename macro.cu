@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <math.h>
+//#include <sys/time.h> //only windows
 #include <iostream>
 
 #include <time.h>
@@ -15,21 +16,14 @@
 
 
 
-/*system information collection for temperature, kinetic energy, potentialand total energy*/
+// system information collection for temperature, kinetic energy, potential and total energy	
 __global__ void compute_info_sums_kernel(
     unsigned int np,
     float4* v,
     float4* f,
     float2* scratch)
 {
-
-
-    /*
-        若线程频繁对某个数据进行读写操作，可以设置操作的数据常驻缓存，
-        这样可以进一步提高代码的运行效率，并且同一个线程块内的所有线程共享该内存区域。
-    */
-    extern __shared__ float2 sdata[];   
-
+    extern __shared__ float2 sdata[];
     int i = blockIdx.x * (blockDim.x * 2) + threadIdx.x;
 
     float2 tempo = make_float2(0.0, 0.0);
@@ -50,10 +44,6 @@ __global__ void compute_info_sums_kernel(
     }
 
     sdata[threadIdx.x] = tempo;
-
-    /*
-        __syncthreads()将确保线程块中的每个线程都执行完 __syncthreads()前面的语句后，才会执行下一条语句。
-    */
     __syncthreads();
 
     int offs = blockDim.x >> 1;
@@ -101,7 +91,7 @@ __global__ void compute_info_final_kernel(
         }
 
         sdata[threadIdx.x] = tempo;
-        __syncthreads(); //	//对线程块中的线程进行同步
+        __syncthreads();
 
 
         int offs = blockDim.x >> 1;
@@ -166,7 +156,7 @@ void compute_info(
 
     compute_info_final_kernel << <grid, threads, shared_bytes >> > (np, info, scratch, n_blocks);
     // block until the device has completed
-    
+    //cudaThreadSynchronize();
     cudaDeviceSynchronize(); 	//Function used for waiting for all kernels to finish
 
 

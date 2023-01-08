@@ -39,9 +39,6 @@
     <CudaCompile Include="pbc.h">
       <Filter>头文件</Filter>
     </CudaCompile>
-    <CudaCompile Include="thermostats.cu">
-      <Filter>源文件</Filter>
-    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils.h">
@@ -57,9 +54,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="macro.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="thermostats.cuh">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
